@@ -10,7 +10,6 @@ def pp_sudoku(puzzle):
         if i in line_indices:
             print(em_dash * 21)
 
-
 def pp_2d(matrix):
     for r in matrix:
         print(r)
@@ -26,31 +25,60 @@ def sudoku_solver(puzzle):
     # 0 1 2
     # 3 4 5
     # 6 7 8
-    grid_set = {k: set() for k in range(9)} 
-    invalid_vals = {(i, j): set() for i in range(9) for j in range(9)}
-    
-    first_zero_found = False
-    start = ()
+    grid_set = {k: set() for k in range(9)}
+    # In sudoku you also have to validate there are 1-9s in each 3x3 square 
+    # of the puzzle. I created an array that helps the program figure out given
+    # r,c position what grid it falls in. We just need a 3x3 array to hold the
+    # grid values. We use grid_index to map the sudoku r,c to the grid zone indices
+    # this takes 2*O(9) space and O(3) look ups (find x y, then find the grid val)
+    grid_zone = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+    grid_index = [0, 0, 0, 1, 1, 1, 2, 2, 2]
+
+    # invalid_vals = {(i, j): set() for i in range(9) for j in range(9)}
+    fill_list = [] 
     # iterate through puzzle to start filling in hashes
-    for r in puzzle:
-        for c in r:
-            val = puzzle[r][c]
-            if not first_zero_found and val == 0:
-                start = (r, c)
+    for r, row in enumerate(puzzle):
+        for c, val in enumerate(row):
+            if val == 0:
+                fill_list.append((r,c))
+                continue
             rows_set[r].add(val)
             cols_set[c].add(val)
-            # How do we figure out the grid?
-            # 0,0 to 2,2 grid 0
-            # 0,3 to 2,5 grid 1
-            # 0,6 to 2,8 grid 2
-            # 3,0 to 5,2 grid 3
-            # 3,3 to 5,5 grid 4
-            # 3,6 to 5,8 grid 5
-            # 6,0 to 8,2 grid 6
-            # 6,3 to 8,5 grid 7
-            # 6,6 to 8,8 grid 8
-    return 0
+            grid_x, grid_y = grid_index[r], grid_index[c]
+            grid_loc = grid_zone[grid_x][grid_y]
+            grid_set[grid_loc].add(val)
 
+    if debug:
+        print(rows_set)
+        print(cols_set)
+        print(grid_set)
+
+    print(fill_list)
+    def recurse(fill_list):
+        curr = fill_list.pop()
+        x, y = curr
+        grid_x, grid_y = grid_index[x], grid_index[y]
+        grid_loc = grid_zone[grid_x][grid_y]
+        for val in range(1, 10):
+            if val in rows_set[x] or val in cols_set[y] or val in grid_set[grid_loc]:
+                continue
+            rows_set[x].add(val)
+            cols_set[y].add(val)
+            grid_set[grid_loc].add(val)
+            if fill_list and recurse(fill_list) == 0:
+                rows_set[x].remove(val)
+                cols_set[y].remove(val)
+                grid_set[grid_loc].remove(val)
+            else:
+                puzzle[x][y] = val
+                return val
+        fill_list.append(curr)
+        return 0
+    
+    recurse(fill_list)
+    return puzzle
+
+debug = False
 puzzle_one = [
     [0, 1, 2, 0, 0, 0, 6, 0, 8],
     [0, 0, 0, 0, 7, 0, 0, 0, 0],
@@ -75,4 +103,5 @@ solution_one = [
     [8, 9, 4, 7, 3, 2, 5, 6, 1]
 ]
 
-sudoku_solver(puzzle_one)
+result = sudoku_solver(puzzle_one)
+pp_sudoku(result)
