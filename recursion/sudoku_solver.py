@@ -9,10 +9,30 @@ def pp_sudoku(puzzle):
         print('')
         if i in line_indices:
             print(em_dash * 21)
+    print()
 
 def pp_2d(matrix):
     for r in matrix:
         print(r)
+
+def sudoku_verify(puzzle):
+    rows_set = {k: set() for k in range(9)}
+    cols_set = {k: set() for k in range(9)}
+    grid_set = {k: set() for k in range(9)}
+    grid_zone = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+    grid_index = [0, 0, 0, 1, 1, 1, 2, 2, 2]
+    for r, row in enumerate(puzzle):
+        for c, val in enumerate(row):
+            if val < 1 or val > 9:
+                return False
+            grid_x, grid_y = grid_index[r], grid_index[c]
+            grid_loc = grid_zone[grid_x][grid_y]
+            if val in rows_set[r] or val in cols_set[c] or val in grid_set[grid_loc]:
+                return False
+            rows_set[r].add(val)
+            cols_set[c].add(val)
+            grid_set[grid_loc].add(val)
+    return True
 
 def sudoku_solver(puzzle):
     pp_sudoku(puzzle)
@@ -53,7 +73,6 @@ def sudoku_solver(puzzle):
         print(cols_set)
         print(grid_set)
 
-    print(fill_list)
     def recurse(fill_list):
         curr = fill_list.pop()
         x, y = curr
@@ -103,5 +122,7 @@ solution_one = [
     [8, 9, 4, 7, 3, 2, 5, 6, 1]
 ]
 
+print(sudoku_verify(solution_one))
 result = sudoku_solver(puzzle_one)
 pp_sudoku(result)
+print(f'Valid Sudoku Answer: {sudoku_verify(result)}')
