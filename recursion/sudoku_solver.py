@@ -1,19 +1,21 @@
 def pp_sudoku(puzzle):
-    em_dash = '—'
+    em_dash = "—"
     line_indices = [2, 5]
     for i, row in enumerate(puzzle):
         for j, c in enumerate(row):
-            print(c, end=' ')
+            print(c, end=" ")
             if j in line_indices:
-                print('|', end = ' ')
-        print('')
+                print("|", end=" ")
+        print("")
         if i in line_indices:
             print(em_dash * 21)
     print()
 
+
 def pp_2d(matrix):
     for r in matrix:
         print(r)
+
 
 def sudoku_verify(puzzle):
     rows_set = {k: set() for k in range(9)}
@@ -34,6 +36,7 @@ def sudoku_verify(puzzle):
             grid_set[grid_loc].add(val)
     return True
 
+
 def sudoku_solver(puzzle):
     pp_sudoku(puzzle)
     # storing row, col and grid states for faster checking
@@ -46,7 +49,7 @@ def sudoku_solver(puzzle):
     # 3 4 5
     # 6 7 8
     grid_set = {k: set() for k in range(9)}
-    # In sudoku you also have to validate there are 1-9s in each 3x3 square 
+    # In sudoku you also have to validate there are 1-9s in each 3x3 square
     # of the puzzle. I created an array that helps the program figure out given
     # r,c position what grid it falls in. We just need a 3x3 array to hold the
     # grid values. We use grid_index to map the sudoku r,c to the grid zone indices
@@ -55,12 +58,12 @@ def sudoku_solver(puzzle):
     grid_index = [0, 0, 0, 1, 1, 1, 2, 2, 2]
 
     # invalid_vals = {(i, j): set() for i in range(9) for j in range(9)}
-    fill_list = [] 
+    fill_list = []
     # iterate through puzzle to start filling in hashes
     for r, row in enumerate(puzzle):
         for c, val in enumerate(row):
             if val == 0:
-                fill_list.append((r,c))
+                fill_list.append((r, c))
                 continue
             rows_set[r].add(val)
             cols_set[c].add(val)
@@ -93,9 +96,10 @@ def sudoku_solver(puzzle):
                 return val
         fill_list.append(curr)
         return 0
-    
+
     recurse(fill_list)
     return puzzle
+
 
 debug = False
 puzzle_one = [
@@ -107,7 +111,7 @@ puzzle_one = [
     [0, 8, 0, 0, 1, 0, 0, 5, 0],
     [0, 0, 0, 0, 0, 1, 0, 0, 0],
     [0, 0, 0, 0, 8, 4, 7, 0, 2],
-    [0, 0, 0, 7, 3, 2, 5, 0, 1]
+    [0, 0, 0, 7, 3, 2, 5, 0, 1],
 ]
 
 solution_one = [
@@ -119,10 +123,10 @@ solution_one = [
     [7, 8, 9, 2, 1, 3, 4, 5, 6],
     [2, 3, 7, 5, 6, 1, 9, 8, 4],
     [5, 6, 1, 9, 8, 4, 7, 3, 2],
-    [8, 9, 4, 7, 3, 2, 5, 6, 1]
+    [8, 9, 4, 7, 3, 2, 5, 6, 1],
 ]
 
 print(sudoku_verify(solution_one))
 result = sudoku_solver(puzzle_one)
 pp_sudoku(result)
-print(f'Valid Sudoku Answer: {sudoku_verify(result)}')
+print(f"Valid Sudoku Answer: {sudoku_verify(result)}")

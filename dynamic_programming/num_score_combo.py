@@ -67,7 +67,7 @@ def team_distinct_interleave(s, t, scores):
     # of each possible sequence for this problem
     s_plays = [len(s) for s in s_plays_seq]
     t_plays = [len(t) for t in t_plays_seq]
-    
+
     # from math import factorial
     # Use combinatorics to calculate the number of interleavings
     # Formula: C(n + m, n) = (n + m)! / (n! * m!)
@@ -85,7 +85,6 @@ def team_distinct_interleave(s, t, scores):
         for i in range(S + 1):
             for j in range(T + 1):
                 # if j = 0, there is only 1 way to choose 0 items from i
-                # if j = i there is only 1 way to chooose i items from i
                 if j == 0 or i == 0:
                     dp[i][j] = 1
                 else:
@@ -115,6 +114,7 @@ def team_distinct_interleave(s, t, scores):
             scoring_sequences += dp_table[sp][tp]
     return scoring_sequences
 
+
 def teams_lead_change(s, t, scores):
     # first we need to calculate all possible sequences for the given score
     # ex if the score is 5 and scores [2,3] we will have [[2,3], [3,2]]
@@ -125,15 +125,36 @@ def teams_lead_change(s, t, scores):
     t_plays_seq = get_all_sequences_final_score(scores, t)
     print(s_plays_seq)
     print(t_plays_seq)
-    
-    def find_max_leads_btwn_two_seq(sp, tp, s_score, t_score):
-        return 0
-    
-    for sp in s_plays_seq:
-        for tp in t_plays_seq:
-            print()
-    
-    return 0
+
+    # dp = [[0] * (s + 1) for _ in range(t+1)]
+    def find_max_lead_change(s_curr, t_curr, s_plays, t_plays):
+        s_goes_first = 0
+        t_goes_first = 0
+        if s_plays:
+            s_goes_first = (
+                find_max_lead_change(s_curr + s_plays[0], t_curr, s_plays[1:], t_plays)
+                + 1
+                if s_curr + s_plays[0] > t_curr
+                else 0
+            )
+        if t_plays:
+            t_goes_first = (
+                find_max_lead_change(s_curr, t_curr + t_plays[0], s_plays, t_plays[1:])
+                + 1
+                if t_curr + t_plays[0] > s_curr
+                else 0
+            )
+
+        return max(s_goes_first, t_goes_first)
+
+    res = 0
+    for s_plays in s_plays_seq:
+        for t_plays in t_plays_seq:
+            res = max(res, find_max_lead_change(0, 0, s_plays, t_plays))
+    # pp_2d(dp)
+    print(res)
+    return res
+
 
 # scores = [2, 3, 7]
 # res = num_score_combo(scores, 12)

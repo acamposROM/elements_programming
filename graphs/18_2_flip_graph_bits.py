@@ -4,7 +4,7 @@ def flip_bits(maze, start):
     max_y = len(maze[0]) - 1
     visited = set()
     queue = []
-    dirs = [(1, 0), (0,1), (-1,0), (0,-1)]
+    dirs = [(1, 0), (0, 1), (-1, 0), (0, -1)]
     queue.append(start)
     x, y = start
     starting_val = maze[x][y]
@@ -13,7 +13,7 @@ def flip_bits(maze, start):
     while queue:
         curr = queue.pop()
         x, y = curr
-        maze[x][y] = starting_val ^ starting_val 
+        maze[x][y] = starting_val ^ starting_val
         for delta in dirs:
             dx, dy = delta
             pos = x + dx, y + dy
@@ -29,11 +29,8 @@ def flip_bits(maze, start):
 
     return maze
 
-pass_one = ( [[1, 0, 1, 0],
-              [1, 1, 0, 0],
-              [1, 1, 1, 1],
-              [1, 1, 0, 1]],
-             (0,0))
+
+pass_one = ([[1, 0, 1, 0], [1, 1, 0, 0], [1, 1, 1, 1], [1, 1, 0, 1]], (0, 0))
 
 res = flip_bits(*pass_one)
 print(res)
