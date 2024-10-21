@@ -39,9 +39,7 @@ def get_all_sequences_final_score(scores, final_score):
                     new_seq = prev_seq + [s]
                     sequences[i].append(new_seq)
 
-    # print(sequences)
-    final_score_sequence_len = [len(s) for s in sequences[-1]]
-    return final_score_sequence_len
+    return sequences[-1]
 
 
 def num_score_combo(scores, final_score):
@@ -62,9 +60,14 @@ def team_distinct_interleave(s, t, scores):
     # we just need the lengths of these to know that team S scored twice
     # with the score of 5. We will use that later to figure out all the distinct scoring sequences
     # given another team T.
-    s_plays = get_all_sequences_final_score(scores, s)
-    t_plays = get_all_sequences_final_score(scores, t)
+    s_plays_seq = get_all_sequences_final_score(scores, s)
+    t_plays_seq = get_all_sequences_final_score(scores, t)
 
+    # we have all the sequences but we just really need lengths
+    # of each possible sequence for this problem
+    s_plays = [len(s) for s in s_plays_seq]
+    t_plays = [len(t) for t in t_plays_seq]
+    
     # from math import factorial
     # Use combinatorics to calculate the number of interleavings
     # Formula: C(n + m, n) = (n + m)! / (n! * m!)
@@ -112,13 +115,34 @@ def team_distinct_interleave(s, t, scores):
             scoring_sequences += dp_table[sp][tp]
     return scoring_sequences
 
+def teams_lead_change(s, t, scores):
+    # first we need to calculate all possible sequences for the given score
+    # ex if the score is 5 and scores [2,3] we will have [[2,3], [3,2]]
+    # we just need the lengths of these to know that team S scored twice
+    # with the score of 5. We will use that later to figure out all the distinct scoring sequences
+    # given another team T.
+    s_plays_seq = get_all_sequences_final_score(scores, s)
+    t_plays_seq = get_all_sequences_final_score(scores, t)
+    print(s_plays_seq)
+    print(t_plays_seq)
+    
+    def find_max_leads_btwn_two_seq(sp, tp, s_score, t_score):
+        return 0
+    
+    for sp in s_plays_seq:
+        for tp in t_plays_seq:
+            print()
+    
+    return 0
 
 # scores = [2, 3, 7]
 # res = num_score_combo(scores, 12)
-scores = [2]
+scores = [2, 3]
 # get_all_sequences_final_score(scores, 12)
 # count_permutations(scores, 4)
 # count_sequences(scores, 12)
 
-res = team_distinct_interleave(6, 4, scores)
-print(res)
+# res = team_distinct_interleave(6, 4, scores)
+# print(res)
+
+teams_lead_change(6, 4, scores)
