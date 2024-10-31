@@ -28,8 +28,6 @@ def levenshtein_dist(s, t):
     pp_2d_word(s, t, dp)
     
     def recurse(p_s, p_t):
-        #print(p_s)
-        #print(p_t)
         if p_s < 0 or p_t < 0:
             return place_holder 
         if dp[p_s][p_t] != place_holder:
@@ -45,9 +43,19 @@ def levenshtein_dist(s, t):
     pp_2d_word(s, t, dp)
     return dp[-1][-1]
 
-levenshtein_dist("bar", "")
-levenshtein_dist("", "bar")
-levenshtein_dist("car", "bar")
-levenshtein_dist("car", "bat")
-#levenshtein_dist("bar", "cat")
-#levenshtein_dist("hello", "world")
+def longest_common_subsequence(s, t):
+    s_len = len(s) + 1
+    t_len = len(t) + 1
+    dp = [[0] * t_len for _ in range(s_len)]
+    pp_2d_word(s, t, dp)
+    dp[0][0] = 0
+    for i in range(1, s_len):
+        for j in range(1, t_len):
+            dp[i][j] = dp[i-1][j-1] + 1 if s[i-1] == t[j-1] else max(dp[i][j-1], dp[i-1][j])
+
+    pp_2d_word(s, t, dp)
+    return dp[-1][-1]
+
+longest_common_subsequence("hello", "lately")
+longest_common_subsequence("abcdefg", "ace")
+longest_common_subsequence("dynamicprogramming", "prognosis")
