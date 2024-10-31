@@ -1,14 +1,19 @@
-def pp_2d_word(s, t, matrix):
-    print('   _', end='  ')
+def pp_2d_word(s, t, matrix, blank_head=True):
+    print(' ', end='  ') # padding for 2d array printing
+    if blank_head:
+        print('  _', end='  ')
     for c in t:
         print(c, end= '  ')
     print()
     for i, r in enumerate(matrix):
+        if not blank_head:
+            i += 1
         if i == 0:
             print('_', end=' ')
         else:
             print(s[i-1], end=' ')
         print(r)
+    print()
 
 # How many edits does it take to transform t to s?
 def levenshtein_dist(s, t):
@@ -56,6 +61,34 @@ def longest_common_subsequence(s, t):
     pp_2d_word(s, t, dp)
     return dp[-1][-1]
 
-longest_common_subsequence("hello", "lately")
-longest_common_subsequence("abcdefg", "ace")
-longest_common_subsequence("dynamicprogramming", "prognosis")
+def num_of_edits_string_to_palindrom(s):
+    s_len = len(s)
+    dp = [[0] * s_len for _ in range(s_len)]
+    index_len = s_len - 1
+    for j in range(s_len):
+        i = 0
+        while j <= index_len and i <= index_len:
+            if i == j:
+                dp[i][j] = 1
+            elif s[i] != s[j]:
+                if i + 1 > index_len:
+                    dp[i][j] = dp[i][j-1]
+                elif j - 1 < 0:
+                    dp[i][j] = dp[i+1][j]
+                else:
+                    dp[i][j] = max(dp[i+1][j], dp[i][j-1])
+            else:
+                dp[i][j] = 2 + dp[i+1][j-1]
+            j += 1
+            i += 1
+    pp_2d_word(s, s, dp, blank_head=False)
+    print(f'Number of deletions needed: {s_len - dp[0][index_len]}\n')
+    return s_len - dp[0][index_len]
+
+# longest_common_subsequence("hello", "lately")
+# longest_common_subsequence("abcdefg", "ace")
+# longest_common_subsequence("dynamicprogramming", "prognosis")
+
+num_of_edits_string_to_palindrom("abdbca")
+num_of_edits_string_to_palindrom("racecar")
+num_of_edits_string_to_palindrom("character")
