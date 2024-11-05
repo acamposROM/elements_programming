@@ -1,7 +1,7 @@
 def pp_2d_word(s, t, matrix, blank_head=True):
     print(' ', end='  ') # padding for 2d array printing
     if blank_head:
-        print('  _', end='  ')
+        print('_', end='  ')
     for c in t:
         print(c, end= '  ')
     print()
@@ -85,10 +85,45 @@ def num_of_edits_string_to_palindrom(s):
     print(f'Number of deletions needed: {s_len - dp[0][index_len]}\n')
     return s_len - dp[0][index_len]
 
-# longest_common_subsequence("hello", "lately")
-# longest_common_subsequence("abcdefg", "ace")
-# longest_common_subsequence("dynamicprogramming", "prognosis")
+def valid_interleaving_string(t, s1, s2):
+    s1_len = len(s1) + 1
+    s2_len = len(s2) + 1
+    t_len = len(t)
+    if len(s1) + len(s2) != t_len:
+        return False
 
-num_of_edits_string_to_palindrom("abdbca")
-num_of_edits_string_to_palindrom("racecar")
-num_of_edits_string_to_palindrom("character")
+    dp = [[0] * s1_len for _ in range(s2_len)]
+    pp_2d_word(s2, s1, dp)
+    dp[0][0] = 1
+    i, j, n = 0, 0, 0
+    pivot_points = []
+    while n < t_len:
+        curr_c = t[n]
+        # When both strings match the current letter, we go right first. if we pop a pivot, we check if we already
+        # visited the right cell with the last condition in the if
+        if i+1 <= (s2_len - 1) and curr_c == s2[i] and j+1 <= (s1_len - 1) and curr_c == s1[j]:
+            pivot_points.append((i, j, n))
+            j += 1
+        elif i+1 <= (s2_len - 1) and curr_c == s2[i]:
+            i += 1
+        elif j+1 <= (s1_len - 1) and curr_c == s1[j]:
+            j += 1
+        else:
+            if pivot_points:
+                i, j, n = pivot_points.pop()
+                i += 1
+            else:
+                pp_2d_word(s2, s1, dp)
+                print(False)
+                return False
+        n += 1
+        dp[i][j] += 1
+
+    pp_2d_word(s2, s1, dp)
+    print(True)
+    return True
+
+# num_of_edits_string_to_palindrom("abdbca")
+# num_of_edits_string_to_palindrom("racecar")
+# num_of_edits_string_to_palindrom("character")
+valid_interleaving_string("gatacta", "gtaa", "atc")
