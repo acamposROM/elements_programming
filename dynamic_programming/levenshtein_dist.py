@@ -85,6 +85,26 @@ def num_of_edits_string_to_palindrom(s):
     print(f'Number of deletions needed: {s_len - dp[0][index_len]}\n')
     return s_len - dp[0][index_len]
 
+# Apparently we do not need to care abou the case where both substrings
+# have the same curr char and we can simplify the loop.
+def chatgpt_is_interleave(s1: str, s2: str, t: str) -> bool:
+    if len(s1) + len(s2) != len(t):
+        return False
+    s1_len = len(s1) + 1
+    s2_len = len(s2) + 1
+    
+    dp = [[False] * s2_len for _ in range(s1_len)]
+    dp[0][0] = True 
+
+    for i in range(s1_len):
+        for j in range(s2_len):
+            if i > 0 and s1[i-1] == t[i+j-1]:
+                dp[i][j] = dp[i][j] or dp[i-1][j]
+            if j > 0 and s2[j-1] == t[i + j - 1]:
+                dp[i][j] = dp[i][j] or dp[i][j - 1]
+
+    return dp[s1_len - 1][s2_len - 1]
+
 def valid_interleaving_string(t, s1, s2):
     s1_len = len(s1) + 1
     s2_len = len(s2) + 1
@@ -126,4 +146,5 @@ def valid_interleaving_string(t, s1, s2):
 # num_of_edits_string_to_palindrom("abdbca")
 # num_of_edits_string_to_palindrom("racecar")
 # num_of_edits_string_to_palindrom("character")
-valid_interleaving_string("gatacta", "gtaa", "atc")
+#valid_interleaving_string("gatacta", "gtaa", "atc")
+print(chatgpt_is_interleave("gatacta", "gtaa", "atc"))
