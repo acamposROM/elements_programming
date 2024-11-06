@@ -1,5 +1,7 @@
 To visualize matplotlib plots in the terminal I have installed https://github.com/daleroberts/itermplot/tree/master
 
+I had to pip3 install itermplot==0.5 otherwise I would get an error.
+
 You have to export this variable in your shell for it to work
 ```shell
 export MPLBACKEND="module://itermplot"
