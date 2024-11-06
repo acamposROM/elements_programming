@@ -1,5 +1,4 @@
-To visualize matplotlib plots in the terminal I have installed
-[](https://github.com/daleroberts/itermplot/tree/master)
+To visualize matplotlib plots in the terminal I have installed https://github.com/daleroberts/itermplot/tree/master
 
 You have to export this variable in your shell for it to work
 ```shell
