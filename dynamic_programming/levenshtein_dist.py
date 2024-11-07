@@ -147,4 +147,6 @@ def valid_interleaving_string(t, s1, s2):
 # num_of_edits_string_to_palindrom("racecar")
 # num_of_edits_string_to_palindrom("character")
 #valid_interleaving_string("gatacta", "gtaa", "atc")
-print(chatgpt_is_interleave("gatacta", "gtaa", "atc"))
+#print(chatgpt_is_interleave("gatacta", "gtaa", "atc"))
+
+print(longest_common_subsequence("cat", "cra"))
