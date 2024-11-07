@@ -48,6 +48,21 @@ def levenshtein_dist(s, t):
     pp_2d_word(s, t, dp)
     return dp[-1][-1]
 
+def lcs_str(s: str, t:str) -> str:
+    ans = ""
+    s_len = len(s) + 1
+    t_len = len(t) + 1
+    dp = [[0] * t_len for _ in range(s_len)]
+    pp_2d_word(s, t, dp)
+    dp[0][0] = 0
+    for i in range(1, s_len):
+        for j in range(1, t_len):
+            if s[i-1] == t[j-1]:
+                dp[i][j] = dp[i-1][j-1] + 1
+                
+            else:
+                dp[i][j] = max(dp[i][j-1], dp[i-1][j])
+    return ans
 def longest_common_subsequence(s, t):
     s_len = len(s) + 1
     t_len = len(t) + 1
