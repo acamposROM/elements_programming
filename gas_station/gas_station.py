@@ -17,7 +17,7 @@ import graphviz
 import matplotlib
 
 matplotlib.use("module://itermplot")
-os.environ["ITERMPLOT_LINES"] = "10"
+os.environ["ITERMPLOT_LINES"] = "8"
 from io import BytesIO
 
 import matplotlib.pyplot as plt
