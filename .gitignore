@@ -3,3 +3,4 @@ pyvenv.cfg
 lib/
 include/
 share/
+__pycache__/
