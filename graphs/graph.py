@@ -26,6 +26,9 @@ class Graph:
     def add_edge(self, a: str, b: str, weight: int):
         self.edges[(a, b)] = weight
 
+    def get_node(self, a):
+        return self.nodes[a]
+
     def get_node_edges(self, a: str) -> dict:
         return {k: v for k, v in self.edges.items() if k[0] == a}
 

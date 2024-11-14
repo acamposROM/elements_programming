@@ -103,4 +103,9 @@ for e in edges:
 G.create_graphviz()
 G.visualize_graph()
 
-bellman_ford(G, s)
+# bellman_ford(G, s)
+
+# Exercise 24.1-1
+print(bellman_ford(G, z))
+G.add_edge(z.name, x.name, 4)
+print(bellman_ford(G, s))
