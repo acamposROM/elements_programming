@@ -13,8 +13,6 @@ from typing import Dict, List, NamedTuple, Tuple
 from graph import Graph
 
 
-# Nodes will have lists for edges.
-# An edge will be a tuple (node, val to get to node)
 class GasStation:
     def __init__(self, name: str, val: float, curr: bool = False) -> None:
         self.name = name
@@ -32,8 +30,6 @@ class GasTank:
 
 
 class GasGraph(Graph):
-    # def get_node_edges(self, a: GasStation, threshold) -> dict:
-    #     return {k: v for k, v in self.edges.items() if k[0] == a.name and v <= threshold}
     def __init__(self) -> None:
         super().__init__()
         self.dp: Dict[GasStation, Dict[int, CostToTakePath]] = {}
@@ -78,6 +74,7 @@ at that node
 def gas_station_min_cost(
     s: GasStation, t: GasStation, G: GasGraph, current_gas: int, max_gas: int
 ) -> CostToTakePath:
+    # Base Case
     if s == t:
         return CostToTakePath(0.00, [])
 
@@ -110,14 +107,13 @@ def gas_station_min_cost(
             for (_, next_node), next_dist in next_edges.items():
                 moving_window.append((next_node, dist + next_dist))
 
-    # To make this easy, let us assume current_gas = 0. We can do
-    # gas tank values later.
-    # the min cost for s->t depends on the min cost s+1 -> t
-    # plus the cost of gas we fill up at station s, from a range
-    # of dist(s, s+1) to U.max. It might be cheaper to fill up
-    # to the max amount of gas at s or if we fill up a specific value
-    # it might be cheapest. we need to test for all possibilities
-
+    # the min cost for s-> depends on the min cost s+1 -> t
+    # plus the cost of gas we filled up at s. The range of
+    # potential gas values g we can fill up will depend on
+    # how much gas we currently have. We have to compute all
+    # of them because we do not know if further down the path
+    # it would be cheaper to fill up a constant amount at S because
+    # it will minimize costs at s_n-1.
     for next_station in station_dict.items():
         next_node, dist = next_station
 
@@ -131,27 +127,20 @@ def gas_station_min_cost(
                 next_node, t, G, current_gas + g - dist, max_gas
             )
             total_cost_of_path = g * s.val + min_cost_next_node_result.cost
-            # If the costs are equal, I think we defer to the node that's furthest away
-            # but that means we probably need to figure out distances of neighbors of nodes or store
-            # the distances this node is away compared to the other ones in the station_queue or something ugh
-            if total_cost_of_path < G.dp[s][current_gas].cost:
-                G.dp[s][current_gas] = CostToTakePath(
-                    total_cost_of_path,
-                    [next_node] + min_cost_next_node_result.path,
-                )
-            elif total_cost_of_path == G.dp[s][current_gas].cost:
-                # Grab the next node in the previously saved path
-                # print(f'current cost saved {G.dp[s][current_gas].cost}')
-                # print(f'total cost of new path: {total_cost_of_path}')
-                # print(G.dp[s][current_gas].path)
-                saved_path_node_head = G.dp[s][current_gas].path[0]
-                dist_to_next_node_head = station_dict[saved_path_node_head]
-                # if the distance of thi
-                if dist > dist_to_next_node_head:
+            # If the costs are equal, choose the one furthest away.
+            if total_cost_of_path == G.dp[s][current_gas].cost:
+                cached_path_node_head = G.dp[s][current_gas].path[0]
+                dist_to_cached_node = station_dict[cached_path_node_head]
+                if dist > dist_to_cached_node:
                     G.dp[s][current_gas] = CostToTakePath(
                         total_cost_of_path,
                         [next_node] + min_cost_next_node_result.path,
                     )
+            elif total_cost_of_path < G.dp[s][current_gas].cost:
+                G.dp[s][current_gas] = CostToTakePath(
+                    total_cost_of_path,
+                    [next_node] + min_cost_next_node_result.path,
+                )
 
     return G.dp[s][current_gas]
 
@@ -165,7 +154,6 @@ G.add_edge(a.name, b.name, 10)
 U = GasTank(curr=0, max=20)
 
 G.init_dp()
-# This should be 10
 print(gas_station_min_cost(a, b, G, U.curr, U.max))
 
 c = GasStation("C", 1.00)
@@ -181,8 +169,6 @@ G_2.add_node(f)
 G_2.add_edge(c.name, d.name, 10)
 G_2.add_edge(d.name, e.name, 10)
 G_2.add_edge(e.name, f.name, 20)
-# G_2.create_graphviz(gas_tank=U)
-# G_2.visualize_graph()
 
 G_2.init_dp()
 print(gas_station_min_cost(c, f, G_2, U.curr, U.max))
