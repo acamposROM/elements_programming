@@ -85,24 +85,23 @@ def gas_station_min_cost(
     else:
         G.dp[s][current_gas] = CostToTakePath(float("inf"), [])
 
-    # First get all node edges to curr node and
-    # filter by the GasTank max.
-    # if we fill up the gas tank here, we can get to nodes
-    # GasTank.max distance away
+    # First, get all node edges to curr node
     edges = G.get_node_edges(s.name)
     moving_window = [(next_node, dist) for (_, next_node), dist in edges.items()]
 
-    # Initializing dict of valid stations we can vist.
-    # Making this a dict to access distances for an edge case.
-    station_dict: Dict[GasStation, int] = {}
+    # Initializing dict of valid stations we can reach.
+    # Making this a dict to access distances away from s
+    # for when two nodes have the same min cost in the
+    # recursive DP loop later on
+    reachable_stations_dict: Dict[GasStation, int] = {}
 
-    # Process all nodes in the moving window to submit them into the station_queue
     while moving_window:
         node, dist = moving_window.pop()
+        # if dist is greater than max gas of car, we cannot reach the node
         if dist <= max_gas:
-            station_dict[G.get_node(node)] = dist
+            reachable_stations_dict[G.get_node(node)] = dist
             next_edges = G.get_node_edges(node)
-            # get all the edges from the node in the moving window
+            # get all the edges from the child node in the moving window
             # append all of them into the moving window
             for (_, next_node), next_dist in next_edges.items():
                 moving_window.append((next_node, dist + next_dist))
@@ -114,15 +113,13 @@ def gas_station_min_cost(
     # of them because we do not know if further down the path
     # it would be cheaper to fill up a constant amount at S because
     # it will minimize costs at s_n-1.
-    for next_station in station_dict.items():
+    for next_station in reachable_stations_dict.items():
         next_node, dist = next_station
-
-        # we need to at least get to this node so we
-        # fill up to the dist minus the current amount of gas we have
-        for g in range(0, (max_gas - current_gas + 1)):
-            # TODO: how do i build my for loop to just find the ranges for this condition
-            if g + current_gas < dist:
-                continue
+        # The range of gas values will either be 0 if current gas is greater
+        # than dist, or dist - current gas, because that is how much gas we
+        # need to even get to next_node
+        start_gas_val = dist - current_gas if current_gas < dist else 0
+        for g in range(start_gas_val, (max_gas - current_gas + 1)):
             min_cost_next_node_result = gas_station_min_cost(
                 next_node, t, G, current_gas + g - dist, max_gas
             )
@@ -130,7 +127,7 @@ def gas_station_min_cost(
             # If the costs are equal, choose the one furthest away.
             if total_cost_of_path == G.dp[s][current_gas].cost:
                 cached_path_node_head = G.dp[s][current_gas].path[0]
-                dist_to_cached_node = station_dict[cached_path_node_head]
+                dist_to_cached_node = reachable_stations_dict[cached_path_node_head]
                 if dist > dist_to_cached_node:
                     G.dp[s][current_gas] = CostToTakePath(
                         total_cost_of_path,
